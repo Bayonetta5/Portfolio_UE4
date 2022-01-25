@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SH/SH_IRifle.h"
 #include "GameFramework/Character.h"
 #include "SH_Player.generated.h"
 
 UCLASS()
-class THELASTRPG_API ASH_Player : public ACharacter
+class THELASTRPG_API ASH_Player : public ACharacter, public ISH_IRifle
 {
 	GENERATED_BODY()
 
@@ -18,6 +19,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCameraComponent* Camera;
+
+public:
+	FORCEINLINE class ASH_CRifle* GetRifle() override { return Rifle; }
 
 public:
 	// Sets default values for this character's properties
@@ -47,6 +51,9 @@ private:
 	void OffRunning();
 
 	void OnRifle();
+
+	void OnAim();
+	void OffAim();
 
 public:
 	UFUNCTION(BlueprintCallable) // BP에서 콜할 수 있는 함수

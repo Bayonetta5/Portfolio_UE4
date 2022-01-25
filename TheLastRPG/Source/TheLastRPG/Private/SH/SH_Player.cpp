@@ -46,7 +46,7 @@ ASH_Player::ASH_Player()
 	SpringArm->TargetArmLength = 200.0f;
 	SpringArm->bDoCollisionTest = false; // 카메라와 물체 사이의 충돌체크 하겠냐는것. 카메라가 뒤집어질 수 있음. 끔.
 	SpringArm->bUsePawnControlRotation = true; // 컨트롤러에 따라 폰이 움직여야 하기 떄문에 켜준다.
-
+	SpringArm->SocketOffset = FVector(0, 60, 0); // 앞의 선을 살짝 올려둠.
 }
 
 void ASH_Player::BeginPlay()
@@ -65,27 +65,35 @@ void ASH_Player::BeginPlay()
 	GetMesh()->SetMaterial(1, LogoMaterial); // 1번째 인덱스에 우리가 만든 머티리얼을 할당한다.
 
 	Rifle = ASH_CRifle::Spawn(GetWorld(), this);
+
+	OnRifle(); // 시작하자마자 총을 장착하도록 함수 실행
 }
 
 void ASH_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
+} 
 
 // Called to bind functionality to input
 void ASH_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	/// Movement(이동과 회전)
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASH_Player::OnMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASH_Player::OnMoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &ASH_Player::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("LookUp", this, &ASH_Player::OnVerticalLook);
 
+	/// Running(Shift), Rifle(총 장착&해제)
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Pressed, this, &ASH_Player::OnRunning);
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Released, this, &ASH_Player::OffRunning);
 	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Released, this, &ASH_Player::OnRifle);
+
+	/// Aim
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ASH_Player::OnAim); // 누르면
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ASH_Player::OffAim); // 떼면
 }
 
 void ASH_Player::OnMoveForward(float Axis)
@@ -131,6 +139,42 @@ void ASH_Player::OffRunning()
 void ASH_Player::OnRifle()
 {
 	SH_CLog::Log(FString("Success OnRifle!"));
+
+	if (Rifle->GetEquipped())
+	{
+		Rifle->Unequip();
+		SH_CLog::Log(FString("Unequip!"));
+		return;
+	}
+	Rifle->Equip();
+	SH_CLog::Log(FString("Equip!"));
+}
+
+void ASH_Player::OnAim()
+{
+	CheckFalse(Rifle->GetEquipped()); // 장착하지 않으면
+	CheckTrue(Rifle->GetEquipping()); // 쥐고 있는 도중이어도 pass
+
+	bUseControllerRotationYaw = true; // 조준모드가 시작되면, 카메라의 방향으로 됨.
+	GetCharacterMovement()->bOrientRotationToMovement = false; // 이동방향으로 회전하는거 막음
+
+	SpringArm->TargetArmLength = 100; // 길이 당김
+	SpringArm->SocketOffset = FVector(0, 30, 10); // 소켓 위치 변경
+	Camera->FieldOfView = 40; // 시야 좁힘
+}
+
+void ASH_Player::OffAim()
+{
+	CheckFalse(Rifle->GetEquipped()); // 장착하지 않으면
+	CheckTrue(Rifle->GetEquipping()); // 쥐고 있는 도중이어도 pass
+
+	/// 전부 기본으로 돌림. 초기값 셋팅으로.
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	SpringArm->TargetArmLength = 200;
+	SpringArm->SocketOffset = FVector(0, 60, 0);
+	Camera->FieldOfView = 90;
 }
 
 void ASH_Player::ChangeColor(FLinearColor InColor)

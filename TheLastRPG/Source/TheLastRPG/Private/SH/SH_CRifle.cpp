@@ -28,17 +28,51 @@ ASH_CRifle::ASH_CRifle()
 
 }
 
+#pragma region Equip Animation
 void ASH_CRifle::Equip()
 {
+	CheckTrue(bEquipped); // 이미 장비를 장착중이면 pass
+	CheckTrue(bEquipping); // 장착 도중이라면 pass
+
+	bEquipping = true;
+	// OwnerCharacter로 하는 이유는 다른 캐릭터(적 AI)도 붙을 수 있어서 중립적인 변수로 만듦.
+	OwnerCharacter->PlayAnimMontage(GrabMontage);
+
 }
 
 void ASH_CRifle::Begin_Equip()
 {
+	bEquipped = true;
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HandSocket);
 }
 
 void ASH_CRifle::End_Equip()
 {
+	bEquipping = false;
 }
+#pragma endregion
+
+#pragma region Unequip Animation
+void ASH_CRifle::Unequip()
+{
+	CheckFalse(bEquipped); // 장착중이지 않을때는 pass
+	CheckTrue(bEquipping); // 장착 도중이라면 pass
+
+	bEquipping = true;
+	OwnerCharacter->PlayAnimMontage(UngrabMontage);
+}
+
+void ASH_CRifle::Begin_Unequip()
+{
+	bEquipped = false;
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocket);
+}
+
+void ASH_CRifle::End_Unequip()
+{
+	bEquipping = false;
+}
+#pragma endregion
 
 void ASH_CRifle::BeginPlay()
 {
