@@ -31,17 +31,17 @@ ACPlayer_YH::ACPlayer_YH()
 	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	//SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'
 	USkeletalMesh* mesh;
-	CHelpers_YH::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'");
+	CHelpers_YH::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/YongHwan/Meshes/Character/YH_SK_Mannequin.YH_SK_Mannequin'");
 	GetMesh()->SetSkeletalMesh(mesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	//블루프린트 클래스가 아니라 애니메이션 블루프린트를 가져와야돼! 와 시발 이거 에러도 안뜨네
+	//블루프린트 클래스가 아니라 애니메이션 블루프린트를 가져와야돼! 와 이거 에러도 안뜨네
 	//AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer.YH_ABP_CPlayer_C'
 	//Blueprint'/Game/YongHwan/BP/YH_BP_CAnimInstance.YH_BP_CAnimInstance_C' 이게 아니라
 	//AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer2.YH_ABP_CPlayer2'
-	CHelpers_YH::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer2.YH_ABP_CPlayer2_C'");
+	CHelpers_YH::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/YongHwan/Meshes/Character/YH_BP_AnimBlueprint2.YH_BP_AnimBlueprint2_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
