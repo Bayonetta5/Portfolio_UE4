@@ -1,7 +1,9 @@
 #include "SH/SH_CRifle.h"
 #include "SH/SH_Global.h"
+#include "SH/SH_IRifle.h"
 #include "Animation/AnimMontage.h"
 #include "GameFramework/Character.h"
+#include "Engine/StaticMeshActor.h"
 #include "Components/SkeletalMeshComponent.h"
 
 ASH_CRifle* ASH_CRifle::Spawn(class UWorld* InWorld, class ACharacter* InOwner)
@@ -74,6 +76,15 @@ void ASH_CRifle::End_Unequip()
 }
 #pragma endregion
 
+void ASH_CRifle::Begin_Aiming()
+{
+	bAiming = true;
+}
+void ASH_CRifle::End_Aiming()
+{
+	bAiming = false;
+}
+
 void ASH_CRifle::BeginPlay()
 {
 	Super::BeginPlay();
@@ -87,6 +98,86 @@ void ASH_CRifle::BeginPlay()
 void ASH_CRifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CheckFalse(bAiming); // Aiming 상태가 아니면 return
 
+	ISH_IRifle* rifle = Cast<ISH_IRifle>(OwnerCharacter);
+	CheckNull(rifle); // Rifle이 ISH_IRifle 상속하고 있지 않으면 return
+
+	FVector start, end, direction;
+	rifle->GetLocationAndDirection(start, end, direction);
+
+	//DrawDebugLine(GetWorld(), start, end, FColor::Green, false, 3.0f);
+
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this); // rifle
+	params.AddIgnoredActor(OwnerCharacter); // character
+
+	FHitResult hitResult;
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_WorldDynamic, params))
+	{
+		AStaticMeshActor* staticMeshActor = Cast<AStaticMeshActor>(hitResult.GetActor()); // 부딪힌 액터를 캐스팅해봄
+		if (!!staticMeshActor) // 성공적으로 캐스팅된다면
+		{
+			UStaticMeshComponent* meshComponent = Cast<UStaticMeshComponent>(staticMeshActor->GetRootComponent());
+			if (!!meshComponent)
+			{
+				if (meshComponent->BodyInstance.bSimulatePhysics) // 충돌처리가 켜져있다면
+				{
+					rifle->OnFocus();
+					return;
+				}
+			}
+		}
+	}
+
+	rifle->OffFocus();
 }
 
+void ASH_CRifle::Begin_Fire()
+{
+	CheckFalse(bEquipped); // 장착중이지 않으면 return
+	CheckTrue(bEquipping); // 장착중이면 return
+	CheckFalse(bAiming); // 에임중이지 않으면 return
+	CheckTrue(bFiring); // 발사중이면 return
+
+	Firing();
+}
+
+void ASH_CRifle::Firing()
+{
+	ISH_IRifle* rifle = Cast<ISH_IRifle>(OwnerCharacter);
+	CheckNull(rifle); // 라이플이 있다면
+
+	FVector start, end, direction;
+	rifle->GetLocationAndDirection(start, end, direction);
+
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this); // rifle
+	params.AddIgnoredActor(OwnerCharacter); // character
+
+	FHitResult hitResult;
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_WorldDynamic, params))
+	{
+		AStaticMeshActor* staticMeshActor = Cast<AStaticMeshActor>(hitResult.GetActor()); // 부딪힌 액터를 캐스팅해봄
+		if (!!staticMeshActor) // 성공적으로 캐스팅된다면
+		{
+			UStaticMeshComponent* meshComponent = Cast<UStaticMeshComponent>(staticMeshActor->GetRootComponent());
+			if (!!meshComponent)
+			{
+				if (meshComponent->BodyInstance.bSimulatePhysics) // 충돌처리가 켜져있다면
+				{
+					direction = staticMeshActor->GetActorLocation() - OwnerCharacter->GetActorLocation(); // 방향벡터
+					direction.Normalize();
+
+					meshComponent->AddImpulseAtLocation(direction* meshComponent->GetMass() * 100, OwnerCharacter->GetActorLocation());
+					return;
+				}
+			}
+		}
+	}
+}
+
+void ASH_CRifle::End_Fire()
+{
+
+}

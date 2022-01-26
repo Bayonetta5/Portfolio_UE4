@@ -34,17 +34,26 @@ public:
 public:
 	FORCEINLINE bool GetEquipped() { return bEquipped; }
 	FORCEINLINE bool GetEquipping() { return bEquipping; }
+	FORCEINLINE bool GetAiming() { return bAiming; }
 
 public:	
 	ASH_CRifle();
 
+	/// Equip
 	void Equip();
 	void Begin_Equip();
 	void End_Equip();
-
+	/// Unequip
 	void Unequip();
 	void Begin_Unequip();
 	void End_Unequip();
+	/// Aiming
+	void Begin_Aiming();
+	void End_Aiming();
+	/// Fire
+	void Begin_Fire();
+	void Firing();
+	void End_Fire();
 
 protected:
 	virtual void BeginPlay() override;
@@ -57,4 +66,6 @@ private:
 
 	bool bEquipped;
 	bool bEquipping;
+	bool bAiming;
+	bool bFiring;
 };
