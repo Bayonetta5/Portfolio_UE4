@@ -14,7 +14,7 @@ AJG_Rifle::AJG_Rifle()
 	JG_Helpers::CreateComponent<USkeletalMeshComponent>(this, &Mesh, "Mesh");
 
 	//USkeletalMesh* mesh;
-	//JG_Helpers::GetAsset<USkeletalMesh>(&mesh, "");
+	//JG_Helpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Lectures/Weapons/Meshes/AR4/SK_AR4.SK_AR4'");
 	//Mesh->SetSkeletalMesh(mesh);
 }
 

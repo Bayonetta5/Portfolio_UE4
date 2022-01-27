@@ -31,13 +31,13 @@ AJG_Player::AJG_Player()
 
 	// 공통자원쓰므로 주의
 	USkeletalMesh* mesh;
-	JG_Helpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'");
+	JG_Helpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/JongGyun/Character/JG_Mannequin.JG_Mannequin'");
 	GetMesh()->SetSkeletalMesh(mesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	JG_Helpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/JongGyun/Character/ABP_JG_Player.ABP_JG_Player_C'");
+	JG_Helpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/JongGyun/Character/ABP_JG_Anim.ABP_JG_Anim_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
@@ -105,7 +105,6 @@ void AJG_Player::OnMoveRight(float Axis)
 void AJG_Player::OnHorizontalLook(float Axis)
 {
 	AddControllerYawInput(Axis);
-
 }
 void AJG_Player::OnVerticalLook(float Axis)
 {
