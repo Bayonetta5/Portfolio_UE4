@@ -7,7 +7,7 @@ ASH_Explosion::ASH_Explosion()
 	SH_CHelpers::CreateComponent<UParticleSystemComponent>(this, &Particle, "Particle");
 
 	UParticleSystem* particle;
-	SH_CHelpers::GetAsset<UParticleSystem>(&particle, "ParticleSystem'/Game/ParagonCountess/FX/Particles/Abilities/BlinkStrike/FX/p_Countess_BlinkStrikeFlash.p_Countess_BlinkStrikeFlash'");
+	SH_CHelpers::GetAsset<UParticleSystem>(&particle, "ParticleSystem'/Game/Lectures/Effects/P_Explosion2.P_Explosion2'");
 	Particle->SetTemplate(particle); // 템플릿 부분에 할당해주자.
 	Particle->bAutoActivate = false; // 바로 자동으로 실행되는거 끔.
 }

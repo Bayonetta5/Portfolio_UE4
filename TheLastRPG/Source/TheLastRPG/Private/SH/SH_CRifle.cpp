@@ -19,12 +19,12 @@ ASH_CRifle::ASH_CRifle()
 	SH_CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Mesh, "Mesh");
 
 	USkeletalMesh* mesh;
-	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/data/119/Weapons/Meshes/AR4/SK_AR4.SK_AR4'");
+	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Lectures/Weapons/Meshes/AR4/SK_AR4.SK_AR4'");
 	Mesh->SetSkeletalMesh(mesh);
 
 	/// TODO Montages
-	SH_CHelpers::GetAsset<UAnimMontage>(&GrabMontage, "AnimMontage'/Game/SungHoon/Montages/SH_Rifle_Grab_Montage.SH_Rifle_Grab_Montage'");
-	SH_CHelpers::GetAsset<UAnimMontage>(&UngrabMontage, "AnimMontage'/Game/SungHoon/Montages/SH_Rifle_Ungrab_Montage.SH_Rifle_Ungrab_Montage'");
+	SH_CHelpers::GetAsset<UAnimMontage>(&GrabMontage, "AnimMontage'/Game/SungHoon/Character/Montage/SH_Rifle_Grab_Montage.SH_Rifle_Grab_Montage'");
+	SH_CHelpers::GetAsset<UAnimMontage>(&UngrabMontage, "AnimMontage'/Game/SungHoon/Character/Montage/SH_Rifle_Ungrab_Montage.SH_Rifle_Ungrab_Montage'");
 
 }
 

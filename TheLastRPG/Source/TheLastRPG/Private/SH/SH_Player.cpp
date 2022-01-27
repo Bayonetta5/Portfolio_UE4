@@ -29,17 +29,17 @@ ASH_Player::ASH_Player()
 
 	bUseControllerRotationYaw = false; // 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 이동하는 방향으로 회전가능
-	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 
 	USkeletalMesh* mesh;
-	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/SungHoon/Mannequin/SH_Mannequin_Female.SH_Mannequin_Female'");
+	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/SungHoon/Character/SH_Female.SH_Female'");
 	GetMesh()->SetSkeletalMesh(mesh);
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Blueprints/ABP_SH_CPlayer.ABP_SH_CPlayer_C'");
+	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Character/ABP_SH_CPlayer.ABP_SH_CPlayer_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
@@ -54,10 +54,10 @@ void ASH_Player::BeginPlay()
 	Super::BeginPlay();
 
 	UMaterialInstanceConstant* bodyMaterial;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/SungHoon/Materials/MI_Female_Body_Inst.MI_Female_Body_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/SungHoon/Character/SH_MI_Female_Body_Inst.SH_MI_Female_Body_Inst'");
 
 	UMaterialInstanceConstant* logoMaterial;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logoMaterial, "MaterialInstanceConstant'/Game/SungHoon/Materials/M_UE4Man_ChestLogo_Inst.M_UE4Man_ChestLogo_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logoMaterial, "MaterialInstanceConstant'/Game/SungHoon/Character/SH_M_Female_ChestLogo_Inst.SH_M_Female_ChestLogo_Inst'");
 
 	BodyMaterial = UMaterialInstanceDynamic::Create(bodyMaterial, this);
 	LogoMaterial = UMaterialInstanceDynamic::Create(logoMaterial, this);
@@ -118,14 +118,14 @@ void ASH_Player::OnVerticalLook(float Axis)
 
 void ASH_Player::OnRunning()
 {
-	SH_CLog::Log(FString("Success OnRunning!"));
-	GetCharacterMovement()->MaxWalkSpeed = 850;
+	GetCharacterMovement()->MaxWalkSpeed = 1200;
+	SH_CLog::Log(FString::Printf(TEXT("Success OnRunning! MaxWalkSpeed : %f"), GetCharacterMovement()->MaxWalkSpeed));
 }
 
 void ASH_Player::OffRunning()
 {
-	SH_CLog::Log(FString("Success OffRunning!"));
-	GetCharacterMovement()->MaxWalkSpeed = 400;
+	GetCharacterMovement()->MaxWalkSpeed = 500;
+	SH_CLog::Log(FString::Printf(TEXT("Success OffRunning! MaxWalkSpeed : %f"), GetCharacterMovement()->MaxWalkSpeed));
 }
 
 void ASH_Player::OnRifle()

@@ -10,6 +10,6 @@ ASH_CGameMode::ASH_CGameMode()
 	if (pawn.Succeeded())
 		DefaultPawnClass = pawn.Class;*/
 
-	FString url = "Blueprint'/Game/SungHoon/Blueprints/BP_SH_CPlayer.BP_SH_CPlayer_C'"; // _C주의
+	FString url = "Blueprint'/Game/SungHoon/Character/BP_SH_CPlayer.BP_SH_CPlayer_C'"; // _C주의
 	SH_CHelpers::GetClass<APawn>(&DefaultPawnClass, url);
 }
