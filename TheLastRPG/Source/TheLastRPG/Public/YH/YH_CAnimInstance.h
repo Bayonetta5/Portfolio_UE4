@@ -18,8 +18,13 @@ protected:
 		float Speed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+		float Direction;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 		bool bEquipped;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+		bool bAiming;
 public:
 	//최초로 애니메이션 비긴플레이
 	virtual void NativeBeginPlay() override;

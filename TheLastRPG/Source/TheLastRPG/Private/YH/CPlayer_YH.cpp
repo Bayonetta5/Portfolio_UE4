@@ -1,4 +1,5 @@
 #include "YH/CPlayer_YH.h"
+#include "YH/Weapon/YH_CRifle.h"
 #include "YH/YH_CAnimInstance.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -31,23 +32,24 @@ ACPlayer_YH::ACPlayer_YH()
 	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	//SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'
 	USkeletalMesh* mesh;
-	CHelpers_YH::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'");
+	CHelpers_YH::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/YongHwan/Meshes/Character/YH_SK_Mannequin.YH_SK_Mannequin'");
 	GetMesh()->SetSkeletalMesh(mesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	//블루프린트 클래스가 아니라 애니메이션 블루프린트를 가져와야돼! 와 시발 이거 에러도 안뜨네
+	//블루프린트 클래스가 아니라 애니메이션 블루프린트를 가져와야돼! 와 이거 에러도 안뜨네
 	//AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer.YH_ABP_CPlayer_C'
 	//Blueprint'/Game/YongHwan/BP/YH_BP_CAnimInstance.YH_BP_CAnimInstance_C' 이게 아니라
 	//AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer2.YH_ABP_CPlayer2'
-	CHelpers_YH::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/YongHwan/BP/YH_ABP_CPlayer2.YH_ABP_CPlayer2_C'");
+	CHelpers_YH::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/YongHwan/BP/Character/YH_BP_AnimBlueprint2.YH_BP_AnimBlueprint2_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 	SpringArm->TargetArmLength = 200.0f;
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->SocketOffset = FVector(0, 60, 0);
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +68,9 @@ void ACPlayer_YH::BeginPlay()
 	LogoMaterial = UMaterialInstanceDynamic::Create(logoMaterial, this);
 
 	GetMesh()->SetMaterial(0, BodyMaterial);
-	GetMesh()->SetMaterial(1, LogoMaterial);	
+	GetMesh()->SetMaterial(1, LogoMaterial);
+	//등장은되는데 부착이 아직 없어
+	Rifle = AYH_CRifle::Spawn(GetWorld(), this);
 }
 
 // Called every frame
@@ -89,6 +93,9 @@ void ACPlayer_YH::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Pressed, this, &ACPlayer_YH::OnRunning);
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Released, this, &ACPlayer_YH::OffRunning);
 
+	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Pressed, this, &ACPlayer_YH::OnRifle);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ACPlayer_YH::OnAim);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ACPlayer_YH::OffAim);
 }
 
 void ACPlayer_YH::OnMoveForward(float Axis)
@@ -128,6 +135,48 @@ void ACPlayer_YH::OffRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 	YH_CLog::Log(GetCharacterMovement()->MaxWalkSpeed);
+}
+
+void ACPlayer_YH::OnRifle()
+{
+	if (Rifle->GetEquipped())
+	{
+		Rifle->Unequip();
+
+		return;
+	}
+
+	Rifle->Equip();
+}
+
+void ACPlayer_YH::OnAim()
+{
+	CheckFalse(Rifle->GetEquipped());
+	CheckTrue(Rifle->GetEquipping());
+
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	SpringArm->TargetArmLength = 100;
+	SpringArm->SocketOffset = FVector(0, 30, 10);
+	//Camera->FieldOfView = 40; 커브적용한다.
+	OnZoomIn();
+	Rifle->Begin_Aiming();
+}
+
+void ACPlayer_YH::OffAim()
+{
+	CheckFalse(Rifle->GetEquipped());
+	CheckTrue(Rifle->GetEquipping());
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	SpringArm->TargetArmLength = 200;
+	SpringArm->SocketOffset = FVector(0, 60, 0);
+	//Camera->FieldOfView = 90;
+	OnZoomOut();
+	Rifle->End_Aiming();
 }
 
 void ACPlayer_YH::ChangeColor(FLinearColor InColor)

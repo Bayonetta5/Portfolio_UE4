@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "YH/Weapon/YH_IRifle.h"
 #include "GameFramework/Character.h"
 #include "CPlayer_YH.generated.h"
 
 UCLASS()
-class THELASTRPG_API ACPlayer_YH : public ACharacter
+class THELASTRPG_API ACPlayer_YH : public ACharacter, public IYH_IRifle
 {
 	GENERATED_BODY()
 
@@ -18,11 +19,23 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleDefaultsOnly)
+protected: //줌인하기위해서 블프에서 가져오려고 private -> protected
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCameraComponent* Camera;
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnZoomIn();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnZoomOut();
 protected:
 	
 	virtual void BeginPlay() override;
+
+public: // 순수 가상함수 재정의
+	FORCEINLINE class AYH_CRifle* GetRifle() override { return Rifle; }
+
 
 public:	
 	
@@ -41,7 +54,10 @@ private:
 private:
 	void OnRunning();
 	void OffRunning();
+	void OnRifle();
 
+	void OnAim();
+	void OffAim();
 public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeColor(FLinearColor InColor);
@@ -49,4 +65,7 @@ public:
 private:
 	class UMaterialInstanceDynamic* BodyMaterial;
 	class UMaterialInstanceDynamic* LogoMaterial;
+
+private:
+	class AYH_CRifle* Rifle;
 };
