@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "JG/JG_IRifle.h"
 #include "GameFramework/Character.h"
 #include "JG_Player.generated.h"
 
 UCLASS()
-class THELASTRPG_API AJG_Player : public ACharacter
+class THELASTRPG_API AJG_Player : public ACharacter, public IJG_IRifle
 {
 	GENERATED_BODY()
 private:
@@ -16,6 +17,10 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	class UCameraComponent* Camera;
+
+public:
+	FORCEINLINE class AJG_Rifle* GetRifle() override { return Rifle; }
+
 public:	
 	AJG_Player();
 
@@ -37,6 +42,11 @@ private:
 	void OnRunning();
 	void OffRunning();
 
+	void OnRifle();
+
+	void OnAim();
+	void OffAim();
+
 public:
 	// C에서는 이렇게 이벤트 정의만 해주고, 이벤트 내용은 BP든 C든 자식에서
 	// 필요한대로 정의해서 사용
@@ -47,4 +57,6 @@ private:
 	class UMaterialInstanceDynamic* BodyMaterial;
 	class UMaterialInstanceDynamic* LogoMaterial;
 
+private:
+	class AJG_Rifle* Rifle;
 };

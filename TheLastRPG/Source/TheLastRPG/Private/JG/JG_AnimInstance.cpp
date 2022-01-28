@@ -3,6 +3,8 @@
 
 #include "JG/JG_AnimInstance.h"
 #include "JG/JG_Global.h"
+#include "JG/JG_IRifle.h"
+#include "JG/JG_Rifle.h"
 #include "GameFramework/Character.h"
 
 void UJG_AnimInstance::NativeBeginPlay()
@@ -18,4 +20,10 @@ void UJG_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	CheckNull(OwnerCharacter); 
 
 	Speed = OwnerCharacter->GetVelocity().Size2D();
+
+	IJG_IRifle* rifle = Cast<IJG_IRifle>(OwnerCharacter);
+	if (!!rifle)
+	{
+		bEquipped = rifle->GetRifle()->GetEquipped();
+	}
 }

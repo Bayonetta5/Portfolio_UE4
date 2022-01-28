@@ -2,6 +2,7 @@
 
 #include "JG/JG_Player.h"
 #include "JG/JG_Global.h"
+#include "JG/JG_Rifle.h"
 #include "JG/JG_AnimInstance.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -44,6 +45,7 @@ AJG_Player::AJG_Player()
 	SpringArm->TargetArmLength = 200.0f;
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->SocketOffset = FVector(0, 60,0);
 
 }
 
@@ -62,6 +64,10 @@ void AJG_Player::BeginPlay()
 	LogoMaterial = UMaterialInstanceDynamic::Create(logoMaterial, this);
 	GetMesh()->SetMaterial(0, BodyMaterial);
 	GetMesh()->SetMaterial(1, LogoMaterial);
+
+	Rifle = AJG_Rifle::Spawn(GetWorld(), this);
+
+	OnRifle();
 }
 
 // Called every frame
@@ -83,6 +89,10 @@ void AJG_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Pressed, this, &AJG_Player::OnRunning);
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Released, this, &AJG_Player::OffRunning);
+
+	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Pressed, this, &AJG_Player::OnRifle);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &AJG_Player::OnAim);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &AJG_Player::OffAim);
 
 }
 
@@ -121,6 +131,47 @@ void AJG_Player::OffRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 200;
 }
+
+void AJG_Player::OnRifle()
+{
+	if (Rifle->GetEquipped())
+	{
+		Rifle->Unequip();
+
+		// if-else보다 return이 끝맺음에 대한 가독성이 좋음
+		return;
+	}
+
+	Rifle->Equip();
+}
+
+void AJG_Player::OnAim()
+{
+	CheckFalse(Rifle->GetEquipped());
+	CheckTrue(Rifle->GetEquipping());
+
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	SpringArm->TargetArmLength = 100;
+	SpringArm->SocketOffset = FVector(0, 30, 10);
+	Camera->FieldOfView = 40;
+
+}
+
+void AJG_Player::OffAim()
+{
+	CheckFalse(Rifle->GetEquipped());
+	CheckTrue(Rifle->GetEquipping());
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	SpringArm->TargetArmLength = 200;
+	SpringArm->SocketOffset = FVector(0, 60, 0);
+	Camera->FieldOfView = 90;
+}
+
 
 void AJG_Player::ChangeColor(FLinearColor InColor)
 {
