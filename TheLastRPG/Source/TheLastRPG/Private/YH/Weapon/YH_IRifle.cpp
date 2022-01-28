@@ -3,25 +3,4 @@
 
 #include "YH/Weapon/YH_IRifle.h"
 
-// Sets default values
-AYH_IRifle::AYH_IRifle()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-}
-
-// Called when the game starts or when spawned
-void AYH_IRifle::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AYH_IRifle::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
+// Add default functionality here for any IYH_IRifle functions that are not pure virtual.
