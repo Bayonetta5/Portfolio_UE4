@@ -32,13 +32,13 @@ protected:
 		void OnZoomOut();
 
 public:
-	FORCEINLINE class ASH_CRifle* GetRifle() override { return Rifle; }
+	FORCEINLINE class ASH_CRifle* GetRifle() override { return Rifle; } // about interface
 
 public:
 	// Sets default values for this character's properties
 	ASH_Player();
 
-	void GetLocationAndDirection(FVector& OutStart, FVector& OutEnd, FVector& OutDirection) override;
+	void GetLocationAndDirection(FVector& OutStart, FVector& OutEnd, FVector& OutDirection) override; // about interface
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,8 +51,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void OnFocus() override;
-	void OffFocus() override;
+	void OnFocus() override; // about interface
+	void OffFocus() override; // about interface
 
 private:
 	void OnMoveForward(float Axis);

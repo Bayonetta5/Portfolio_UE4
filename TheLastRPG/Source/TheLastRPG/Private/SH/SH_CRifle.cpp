@@ -145,7 +145,8 @@ void ASH_CRifle::Begin_Fire()
 
 void ASH_CRifle::Firing()
 {
-	ISH_IRifle* rifle = Cast<ISH_IRifle>(OwnerCharacter);
+	// 부모* 변수 = 자식 
+	ISH_IRifle* rifle = Cast<ISH_IRifle>(OwnerCharacter); // 처음보는 문법.
 	CheckNull(rifle); // 라이플이 있다면
 
 	FVector start, end, direction;
@@ -168,8 +169,9 @@ void ASH_CRifle::Firing()
 				{
 					direction = staticMeshActor->GetActorLocation() - OwnerCharacter->GetActorLocation(); // 방향벡터
 					direction.Normalize();
-
+					
 					meshComponent->AddImpulseAtLocation(direction* meshComponent->GetMass() * 100, OwnerCharacter->GetActorLocation());
+					SH_CLog::Log("hit!");
 					return;
 				}
 			}

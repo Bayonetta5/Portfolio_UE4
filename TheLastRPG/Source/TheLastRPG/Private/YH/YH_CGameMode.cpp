@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "YH/YH_CGameMode.h"
-#include "TheLastRPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "YH/Global_YH.h"
 

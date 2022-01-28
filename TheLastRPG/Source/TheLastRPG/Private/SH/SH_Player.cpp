@@ -55,7 +55,7 @@ ASH_Player::ASH_Player()
 void ASH_Player::GetLocationAndDirection(FVector & OutStart, FVector & OutEnd, FVector & OutDirection)
 {
 	OutDirection = Camera->GetForwardVector();
-	
+
 	FTransform transform = Camera->GetComponentToWorld();
 	FVector cameraLocation = transform.GetLocation();
 	OutStart = cameraLocation + OutDirection; // 카메라 위치보다 좀더 앞의 방향
@@ -93,7 +93,7 @@ void ASH_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-} 
+}
 
 // Called to bind functionality to input
 void ASH_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -194,7 +194,7 @@ void ASH_Player::OnAim()
 
 	SpringArm->TargetArmLength = 100; // 길이 당김
 	SpringArm->SocketOffset = FVector(0, 30, 10); // 소켓 위치 변경
-	
+
 	//Camera->FieldOfView = 40; // 시야 좁힘
 	OnZoomIn(); // BP에서 이벤트 노드로 재정의함
 	Rifle->Begin_Aiming();
