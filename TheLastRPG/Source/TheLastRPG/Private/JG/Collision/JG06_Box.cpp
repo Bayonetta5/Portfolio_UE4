@@ -50,7 +50,7 @@ void AJG06_Box::BeginPlay()
 	triggers[0]->OnMultiLightBeginOverlap.AddUFunction(this, "OnPhysics"); 
 
 	UMaterialInstanceConstant* material;
-	JG_Helpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Materials/M_Mesh_Inst.M_Mesh_Inst'");
+	JG_Helpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/JongGyun/Materials/M_Mesh_Inst.M_Mesh_Inst'");
 
 	for (int32 i = 0; i < 3; ++i)
 	{

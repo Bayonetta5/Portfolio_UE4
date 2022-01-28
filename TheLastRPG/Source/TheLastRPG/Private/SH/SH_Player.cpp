@@ -5,6 +5,7 @@
 #include "SH/SH_Global.h"
 #include "SH/SH_CAnimInstance.h"
 #include "SH/SH_CRifle.h"
+#include "SH/Lectures/Widgets/SH_CUserWidget_CrossHair.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
@@ -39,14 +40,30 @@ ASH_Player::ASH_Player()
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Character/ABP_SH_CPlayer.ABP_SH_CPlayer_C'");
+	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Character/SH_ABP_CPlayer.SH_ABP_CPlayer_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 	SpringArm->TargetArmLength = 200.0f;
 	SpringArm->bDoCollisionTest = false; // 카메라와 물체 사이의 충돌체크 하겠냐는것. 카메라가 뒤집어질 수 있음. 끔.
 	SpringArm->bUsePawnControlRotation = true; // 컨트롤러에 따라 폰이 움직여야 하기 떄문에 켜준다.
+	SpringArm->SocketOffset = FVector(0, 60, 0); // 앞의 선을 살짝 올려둠.
 
+	SH_CHelpers::GetClass<USH_CUserWidget_CrossHair>(&CrossHairClass, "WidgetBlueprint'/Game/SungHoon/Widgets/SH_WB_CrossHair.SH_WB_CrossHair_C'");
+}
+
+void ASH_Player::GetLocationAndDirection(FVector & OutStart, FVector & OutEnd, FVector & OutDirection)
+{
+	OutDirection = Camera->GetForwardVector();
+
+	FTransform transform = Camera->GetComponentToWorld();
+	FVector cameraLocation = transform.GetLocation();
+	OutStart = cameraLocation + OutDirection; // 카메라 위치보다 좀더 앞의 방향
+
+	FVector conDirection = UKismetMathLibrary::RandomUnitVectorInEllipticalConeInDegrees(OutDirection, 0.2f, 0.3f);
+	conDirection *= 3000.0f;
+
+	OutEnd = cameraLocation + conDirection;
 }
 
 void ASH_Player::BeginPlay()
@@ -64,7 +81,12 @@ void ASH_Player::BeginPlay()
 	GetMesh()->SetMaterial(0, BodyMaterial); // 0번째 인덱스에 우리가 만든 머티리얼을 할당한다.
 	GetMesh()->SetMaterial(1, LogoMaterial); // 1번째 인덱스에 우리가 만든 머티리얼을 할당한다.
 
+	CrossHair = CreateWidget<USH_CUserWidget_CrossHair, APlayerController>(GetController<APlayerController>(), CrossHairClass);
+	CrossHair->AddToViewport();
+	CrossHair->SetVisibility(ESlateVisibility::Hidden);
+
 	Rifle = ASH_CRifle::Spawn(GetWorld(), this);
+	OnRifle(); // 시작하자마자 총을 장착하도록 함수 실행
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -78,14 +100,34 @@ void ASH_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	/// Movement(이동과 회전)
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASH_Player::OnMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASH_Player::OnMoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &ASH_Player::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("LookUp", this, &ASH_Player::OnVerticalLook);
 
+	/// Running(Shift), Rifle(총 장착&해제)
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Pressed, this, &ASH_Player::OnRunning);
 	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Released, this, &ASH_Player::OffRunning);
 	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Released, this, &ASH_Player::OnRifle);
+
+	/// Aim
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ASH_Player::OnAim); // 누르면
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ASH_Player::OffAim); // 떼면
+
+	/// Fire
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ASH_Player::OnFire); // 누르면
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ASH_Player::OffFire); // 떼면
+}
+
+void ASH_Player::OnFocus()
+{
+	CrossHair->OnFocus();
+}
+
+void ASH_Player::OffFocus()
+{
+	CrossHair->OffFocus();
 }
 
 void ASH_Player::OnMoveForward(float Axis)
@@ -131,6 +173,60 @@ void ASH_Player::OffRunning()
 void ASH_Player::OnRifle()
 {
 	SH_CLog::Log(FString("Success OnRifle!"));
+
+	if (Rifle->GetEquipped())
+	{
+		Rifle->Unequip();
+		SH_CLog::Log(FString("Unequip!"));
+		return;
+	}
+	Rifle->Equip();
+	SH_CLog::Log(FString("Equip!"));
+}
+
+void ASH_Player::OnAim()
+{
+	CheckFalse(Rifle->GetEquipped()); // 장착하지 않으면
+	CheckTrue(Rifle->GetEquipping()); // 쥐고 있는 도중이어도 pass
+
+	bUseControllerRotationYaw = true; // 조준모드가 시작되면, 카메라의 방향으로 됨.
+	GetCharacterMovement()->bOrientRotationToMovement = false; // 이동방향으로 회전하는거 막음
+
+	SpringArm->TargetArmLength = 100; // 길이 당김
+	SpringArm->SocketOffset = FVector(0, 30, 10); // 소켓 위치 변경
+
+	//Camera->FieldOfView = 40; // 시야 좁힘
+	OnZoomIn(); // BP에서 이벤트 노드로 재정의함
+	Rifle->Begin_Aiming();
+	CrossHair->SetVisibility(ESlateVisibility::Visible);
+}
+
+void ASH_Player::OffAim()
+{
+	CheckFalse(Rifle->GetEquipped()); // 장착하지 않으면
+	CheckTrue(Rifle->GetEquipping()); // 쥐고 있는 도중이어도 pass
+
+	/// 전부 기본으로 돌림. 초기값 셋팅으로.
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	SpringArm->TargetArmLength = 200;
+	SpringArm->SocketOffset = FVector(0, 60, 0);
+
+	//Camera->FieldOfView = 90; // 원상 복구
+	OnZoomOut(); // BP에서 이벤트 노드로 재정의함
+	Rifle->End_Aiming();
+	CrossHair->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void ASH_Player::OnFire()
+{
+	Rifle->Begin_Fire();
+}
+
+void ASH_Player::OffFire()
+{
+	Rifle->End_Fire();
 }
 
 void ASH_Player::ChangeColor(FLinearColor InColor)
