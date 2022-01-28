@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraShake.h"
 #include "Components/CapsuleComponent.h" // for GetCapsuleComponent
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -50,6 +51,7 @@ ASH_Player::ASH_Player()
 	SpringArm->SocketOffset = FVector(0, 60, 0); // ¾ÕÀÇ ¼±À» »ìÂ¦ ¿Ã·ÁµÒ.
 
 	SH_CHelpers::GetClass<USH_CUserWidget_CrossHair>(&CrossHairClass, "WidgetBlueprint'/Game/SungHoon/Widgets/SH_WB_CrossHair.SH_WB_CrossHair_C'");
+	SH_CHelpers::GetClass<UMatineeCameraShake>(&CameraShakeClass, "Blueprint'/Game/SungHoon/Blueprints/SH_BP_CameraShake.SH_BP_CameraShake_C'");
 }
 
 void ASH_Player::GetLocationAndDirection(FVector & OutStart, FVector & OutEnd, FVector & OutDirection)
@@ -128,6 +130,11 @@ void ASH_Player::OnFocus()
 void ASH_Player::OffFocus()
 {
 	CrossHair->OffFocus();
+}
+
+void ASH_Player::PlayCameraShake()
+{
+	GetController<APlayerController>()->PlayerCameraManager->StartCameraShake(CameraShakeClass);
 }
 
 void ASH_Player::OnMoveForward(float Axis)

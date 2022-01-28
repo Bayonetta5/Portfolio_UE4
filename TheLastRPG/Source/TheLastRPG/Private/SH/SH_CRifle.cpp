@@ -1,10 +1,15 @@
 #include "SH/SH_CRifle.h"
 #include "SH/SH_Global.h"
 #include "SH/SH_IRifle.h"
+#include "SH/SH_Player.h"
+#include "SH/Lectures/SH_CBullet.h"
 #include "Animation/AnimMontage.h"
 #include "GameFramework/Character.h"
 #include "Engine/StaticMeshActor.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundCue.h"
+#include "Materials/MaterialInstanceConstant.h"
 
 ASH_CRifle* ASH_CRifle::Spawn(class UWorld* InWorld, class ACharacter* InOwner)
 {
@@ -21,12 +26,22 @@ ASH_CRifle::ASH_CRifle()
 	SH_CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Mesh, "Mesh");
 
 	USkeletalMesh* mesh;
-	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Lectures/Weapons/Meshes/AR4/SK_AR4.SK_AR4'");
+	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/SungHoon/Weapons/SH_AR5.SH_AR5'");
 	Mesh->SetSkeletalMesh(mesh);
 
-	/// TODO Montages
+	/// Montages
 	SH_CHelpers::GetAsset<UAnimMontage>(&GrabMontage, "AnimMontage'/Game/SungHoon/Character/Montage/SH_Rifle_Grab_Montage.SH_Rifle_Grab_Montage'");
 	SH_CHelpers::GetAsset<UAnimMontage>(&UngrabMontage, "AnimMontage'/Game/SungHoon/Character/Montage/SH_Rifle_Ungrab_Montage.SH_Rifle_Ungrab_Montage'");
+
+	/// Particle
+	SH_CHelpers::GetAsset<UParticleSystem>(&FlashParticle, "ParticleSystem'/Game/Lectures/Particles_Rifle/Particles/VFX_Muzzleflash.VFX_Muzzleflash'");
+	SH_CHelpers::GetAsset<UParticleSystem>(&EjectParticle, "ParticleSystem'/Game/Lectures/Particles_Rifle/Particles/VFX_Eject_bullet.VFX_Eject_bullet'");
+	SH_CHelpers::GetAsset<UParticleSystem>(&ImpactParticle, "ParticleSystem'/Game/Lectures/Particles_Rifle/Particles/VFX_Impact_Default.VFX_Impact_Default'");
+
+	SH_CHelpers::GetAsset<USoundCue>(&FireSoundCue, "SoundCue'/Game/SungHoon/Weapons/Sounds/S_RifleShoot_Cue.S_RifleShoot_Cue'");
+	SH_CHelpers::GetClass<ASH_CBullet>(&BulletClass, "Blueprint'/Game/SungHoon/Blueprints/SH_BP_CBullet.SH_BP_CBullet_C'");
+
+	SH_CHelpers::GetAsset<UMaterialInstanceConstant>(&DecalMaterial, "MaterialInstanceConstant'/Game/SungHoon/Weapons/Materials/M_Decal_Inst.M_Decal_Inst'");
 
 }
 
@@ -152,11 +167,30 @@ void ASH_CRifle::Firing()
 	FVector start, end, direction;
 	rifle->GetLocationAndDirection(start, end, direction);
 
+	ASH_Player* player = Cast<ASH_Player>(OwnerCharacter);
+	if (!!player)
+		player->PlayCameraShake();
+
+	UGameplayStatics::SpawnEmitterAttached(FlashParticle, Mesh, "MuzzleFlash", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
+	UGameplayStatics::SpawnEmitterAttached(EjectParticle, Mesh, "EjectBullet", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
+
+	FVector muzzleLocation = Mesh->GetSocketLocation("MuzzleFlash");
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSoundCue, muzzleLocation);
+	
+	if (!!BulletClass)
+		GetWorld()->SpawnActor<ASH_CBullet>(BulletClass, muzzleLocation, direction.Rotation());
+
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(this); // rifle
 	params.AddIgnoredActor(OwnerCharacter); // character
 
 	FHitResult hitResult;
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, params))
+	{
+		FRotator rotator = hitResult.ImpactNormal.Rotation();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, hitResult.Location, rotator); // ÃÑ¾Ë »ý¼º
+	}
+
 	if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_WorldDynamic, params))
 	{
 		AStaticMeshActor* staticMeshActor = Cast<AStaticMeshActor>(hitResult.GetActor()); // ºÎµúÈù ¾×ÅÍ¸¦ Ä³½ºÆÃÇØº½

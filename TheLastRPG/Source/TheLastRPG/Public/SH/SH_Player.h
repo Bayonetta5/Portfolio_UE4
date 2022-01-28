@@ -12,10 +12,12 @@ class THELASTRPG_API ASH_Player : public ACharacter, public ISH_IRifle
 {
 	GENERATED_BODY()
 
-
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 		TSubclassOf<class USH_CUserWidget_CrossHair> CrossHairClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		TSubclassOf<class UMatineeCameraShake> CameraShakeClass;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)
@@ -53,6 +55,8 @@ public:
 
 	void OnFocus() override; // about interface
 	void OffFocus() override; // about interface
+
+	void PlayCameraShake();
 
 private:
 	void OnMoveForward(float Axis);

@@ -27,6 +27,22 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
 		class UAnimMontage* UngrabMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		class UParticleSystem* FlashParticle;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		class UParticleSystem* EjectParticle;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		class UParticleSystem* ImpactParticle;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		class USoundCue* FireSoundCue;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		TSubclassOf<class ASH_CBullet> BulletClass;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+		class UMaterialInstanceConstant* DecalMaterial;
+
 public:
 	// 자기 자료형을 생성해서 리턴함. static이라 독립적임. 월드와 캐릭터를 받아준다.
 	static ASH_CRifle* Spawn(class UWorld* InWorld, class ACharacter* InOwner);
