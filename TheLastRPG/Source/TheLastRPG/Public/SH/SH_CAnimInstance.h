@@ -17,6 +17,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation") // BP에서 읽기 전용
 		float Speed;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation") // BP에서 읽기 전용
+		float Direction;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation") // BP에서 읽기 전용
+		float Pitch;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation") // BP에서 읽기 전용
+		bool bEquipped;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation") // BP에서 읽기 전용
+		bool bAiming;
+
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
