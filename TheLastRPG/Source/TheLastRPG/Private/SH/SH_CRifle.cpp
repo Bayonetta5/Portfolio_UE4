@@ -42,7 +42,6 @@ ASH_CRifle::ASH_CRifle()
 	SH_CHelpers::GetClass<ASH_CBullet>(&BulletClass, "Blueprint'/Game/SungHoon/Lectures/GunShooting/Blueprints/SH_BP_CBullet.SH_BP_CBullet_C'");
 
 	SH_CHelpers::GetAsset<UMaterialInstanceConstant>(&DecalMaterial, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Weapons/Materials/M_Decal_Inst.M_Decal_Inst'");
-
 }
 
 #pragma region Equip Animation
@@ -54,7 +53,6 @@ void ASH_CRifle::Equip()
 	bEquipping = true;
 	// OwnerCharacter로 하는 이유는 다른 캐릭터(적 AI)도 붙을 수 있어서 중립적인 변수로 만듦.
 	OwnerCharacter->PlayAnimMontage(GrabMontage);
-
 }
 
 void ASH_CRifle::Begin_Equip()
@@ -190,6 +188,7 @@ void ASH_CRifle::Firing()
 	{
 		FRotator rotator = hitResult.ImpactNormal.Rotation();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, hitResult.Location, rotator); // 탄환 이펙트 생성
+		UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMaterial, FVector(5), hitResult.Location, rotator, 10.0f); // Decal 생성
 	}
 
 	/// 실제 넘어뜨리는 코드
