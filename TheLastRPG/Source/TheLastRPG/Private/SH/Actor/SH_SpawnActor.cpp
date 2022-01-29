@@ -14,15 +14,8 @@ ASH_SpawnActor::ASH_SpawnActor()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	RootComponent = Mesh;
 
-	/*ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(L"StaticMesh'/Game/SungHoon/Meshes/SH_Cube.SH_Cube'");
-
-	if (mesh.Succeeded())
-	{
-		Mesh->SetStaticMesh(mesh.Object);
-	}*/
-
 	UStaticMesh* mesh;
-	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Meshes/SH_Cube.SH_Cube'");
+	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Lectures/GunShooting/Meshes/SH_Cube.SH_Cube'");
 	Mesh->SetStaticMesh(mesh);
 }
 
@@ -31,12 +24,8 @@ void ASH_SpawnActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// MaterialInstanceConstant'/Game/SungHoon/Materials/M_Mesh_Inst.M_Mesh_Inst'
-	// UObject* obj = StaticLoadObject(UMaterialInstanceConstant::StaticClass(), NULL, L"MaterialInstanceConstant'/Game/SungHoon/Materials/M_Mesh_Inst.M_Mesh_Inst'");
-	//UMaterialInstanceConstant* material = Cast<UMaterialInstanceConstant>(obj);
-
 	UMaterialInstanceConstant* material;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Materials/SH_M_Mesh_Inst.SH_M_Mesh_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Materials/SH_M_Mesh_Inst.SH_M_Mesh_Inst'");
 
 	Material = UMaterialInstanceDynamic::Create(material, this);
 	Mesh->SetMaterial(0, Material); // 0번째 인덱스에 우리가 만든 머티리얼을 할당한다.

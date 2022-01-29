@@ -11,14 +11,14 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_Movement = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MOVEMENT")); //o
+	//m_Movement = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MOVEMENT")); //o
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM(TEXT("SkeletalMesh'/Game/ParagonCountess/Characters/Heroes/Countess/Meshes/SM_Countess.SM_Countess'"));
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM(TEXT("SkeletalMesh'/Game/ParagonCountess/Characters/Heroes/Countess/Meshes/SM_Countess.SM_Countess'"));
 
-	if (SM.Succeeded())
-	{
-		this->GetMesh()->SetSkeletalMesh(SM.Object);
-	}
+	//if (SM.Succeeded())
+	//{
+	//	this->GetMesh()->SetSkeletalMesh(SM.Object);
+	//}
 }
 
 // Called when the game starts or when spawned

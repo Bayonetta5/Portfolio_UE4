@@ -19,7 +19,7 @@ ASH_Box::ASH_Box()
 	Text->Text = FText::FromString(GetName());
 
 	UStaticMesh* mesh;
-	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Meshes/SH_Cube.SH_Cube'");
+	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Lectures/GunShooting/Meshes/SH_Cube.SH_Cube'");
 	for (int32 i = 0; i < 3; ++i)
 	{
 		FString str;
@@ -44,7 +44,7 @@ void ASH_Box::BeginPlay()
 	triggers[0]->OnMultiLightBeginOverlap.AddUFunction(this, "OnPhysics"); //BindUFunction¿Ã æ∆¥‘
 
 	UMaterialInstanceConstant* material;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Materials/SH_M_Mesh_Inst.SH_M_Mesh_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Materials/SH_M_Mesh_Inst.SH_M_Mesh_Inst'");
 
 	for (int32 i = 0; i < 3; ++i)
 	{

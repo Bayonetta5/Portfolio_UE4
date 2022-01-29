@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SH/SH_Player.h"
 #include "SH/SH_Global.h"
 #include "SH/SH_CAnimInstance.h"
@@ -34,14 +31,14 @@ ASH_Player::ASH_Player()
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 
 	USkeletalMesh* mesh;
-	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/SungHoon/Character/SH_Female.SH_Female'");
+	SH_CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/SungHoon/Lectures/GunShooting/Character/SH_Female.SH_Female'");
 	GetMesh()->SetSkeletalMesh(mesh);
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UAnimInstance> animInstance;
-	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Character/SH_ABP_CPlayer.SH_ABP_CPlayer_C'");
+	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Lectures/GunShooting/Character/SH_ABP_CPlayer.SH_ABP_CPlayer_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
@@ -50,8 +47,8 @@ ASH_Player::ASH_Player()
 	SpringArm->bUsePawnControlRotation = true; // 컨트롤러에 따라 폰이 움직여야 하기 떄문에 켜준다.
 	SpringArm->SocketOffset = FVector(0, 60, 0); // 앞의 선을 살짝 올려둠.
 
-	SH_CHelpers::GetClass<USH_CUserWidget_CrossHair>(&CrossHairClass, "WidgetBlueprint'/Game/SungHoon/Widgets/SH_WB_CrossHair.SH_WB_CrossHair_C'");
-	SH_CHelpers::GetClass<UMatineeCameraShake>(&CameraShakeClass, "Blueprint'/Game/SungHoon/Blueprints/SH_BP_CameraShake.SH_BP_CameraShake_C'");
+	SH_CHelpers::GetClass<USH_CUserWidget_CrossHair>(&CrossHairClass, "WidgetBlueprint'/Game/SungHoon/Lectures/GunShooting/Widgets/SH_WB_CrossHair.SH_WB_CrossHair_C'");
+	SH_CHelpers::GetClass<UMatineeCameraShake>(&CameraShakeClass, "Blueprint'/Game/SungHoon/Lectures/GunShooting/Blueprints/SH_BP_CameraShake.SH_BP_CameraShake_C'");
 }
 
 void ASH_Player::GetLocationAndDirection(FVector & OutStart, FVector & OutEnd, FVector & OutDirection)
@@ -73,10 +70,10 @@ void ASH_Player::BeginPlay()
 	Super::BeginPlay();
 
 	UMaterialInstanceConstant* bodyMaterial;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/SungHoon/Character/SH_MI_Female_Body_Inst.SH_MI_Female_Body_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Character/SH_MI_Female_Body_Inst.SH_MI_Female_Body_Inst'");
 
 	UMaterialInstanceConstant* logoMaterial;
-	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logoMaterial, "MaterialInstanceConstant'/Game/SungHoon/Character/SH_M_Female_ChestLogo_Inst.SH_M_Female_ChestLogo_Inst'");
+	SH_CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logoMaterial, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Character/SH_M_Female_ChestLogo_Inst.SH_M_Female_ChestLogo_Inst'");
 
 	BodyMaterial = UMaterialInstanceDynamic::Create(bodyMaterial, this);
 	LogoMaterial = UMaterialInstanceDynamic::Create(logoMaterial, this);

@@ -4,12 +4,12 @@
 
 ASH_CGameMode::ASH_CGameMode()
 {
-	//DefaultPawnClass = APlayerCharacter::StaticClass();
+	DefaultPawnClass = APlayerCharacter::StaticClass();
 	
 	/*ConstructorHelpers::FClassFinder<APawn> pawn(L"Blueprint'/Game/SungHoon/Blueprints/BP_SH_Player.BP_SH_Player_C'");
 	if (pawn.Succeeded())
 		DefaultPawnClass = pawn.Class;*/
 
-	FString url = "Blueprint'/Game/SungHoon/Character/SH_BP_CPlayer.SH_BP_CPlayer_C'"; // _C주의
+	FString url = "Blueprint'/Game/SungHoon/Lectures/GunShooting/Character/SH_BP_CPlayer.SH_BP_CPlayer_C'"; // _C주의
 	SH_CHelpers::GetClass<APawn>(&DefaultPawnClass, url);
 }

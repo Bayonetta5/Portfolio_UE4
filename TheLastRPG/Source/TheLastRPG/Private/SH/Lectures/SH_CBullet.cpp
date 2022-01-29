@@ -10,11 +10,11 @@ ASH_CBullet::ASH_CBullet()
 	SH_CHelpers::CreateActorComponent(this, &Projectile, "Projectile");
 
 	UStaticMesh* mesh;
-	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Meshes/SH_Sphere.SH_Sphere'");
+	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Lectures/GunShooting/Meshes/SH_Sphere.SH_Sphere'");
 	Mesh->SetStaticMesh(mesh);
 
 	UMaterialInstanceConstant* material;
-	SH_CHelpers::GetAsset<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Materials/SH_M_Bullet_Inst.SH_M_Bullet_Inst'");
+	SH_CHelpers::GetAsset<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/SungHoon/Lectures/GunShooting/Materials/SH_M_Bullet_Inst.SH_M_Bullet_Inst'");
 	Mesh->SetMaterial(0, material);
 	Mesh->SetRelativeScale3D(FVector(1.0f, 0.025f, 0.025f));
 

@@ -17,7 +17,7 @@ ASH_Cylinder::ASH_Cylinder()
 	Text->Text = FText::FromString(GetName());
 
 	UStaticMesh* mesh;
-	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Meshes/SH_Cylinder.SH_Cylinder'");
+	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Lectures/GunShooting/Meshes/SH_Cylinder.SH_Cylinder'");
 
 	Mesh->SetStaticMesh(mesh);
 	Mesh->SetRelativeScale3D(FVector(1, 1, 2.5f));

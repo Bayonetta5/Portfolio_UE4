@@ -7,7 +7,7 @@ ASH_Cube::ASH_Cube()
 	SH_CHelpers::CreateComponent<UStaticMeshComponent>(this, &Mesh, "Mesh");
 
 	UStaticMesh* mesh;
-	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Meshes/SH_Cube.SH_Cube'");
+	SH_CHelpers::GetAsset<UStaticMesh>(&mesh, "StaticMesh'/Game/SungHoon/Lectures/GunShooting/Meshes/SH_Cube.SH_Cube'");
 	Mesh->SetStaticMesh(mesh);
 	Mesh->SetSimulatePhysics(true);
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
