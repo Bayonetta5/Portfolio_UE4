@@ -38,7 +38,15 @@ private:
 public:	
 	USH_CMontagesComponent();
 
+	void PlayRoll();
+	void PlayBackstep();
+
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	void PlayAnimMontage(EStateType InState);
+
+private:
+	FMontageData* Datas[(int32)EStateType::Max];
 };

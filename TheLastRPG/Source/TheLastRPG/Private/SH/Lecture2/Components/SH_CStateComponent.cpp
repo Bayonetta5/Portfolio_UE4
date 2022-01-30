@@ -16,6 +16,7 @@ void USH_CStateComponent::BeginPlay()
 void USH_CStateComponent::SetIdleMode()
 {
 	ChangeType(EStateType::Idle);
+	SH_CLog::Print("SetIdleMode");
 }
 
 void USH_CStateComponent::SetRollMode()
@@ -33,6 +34,10 @@ void USH_CStateComponent::ChangeType(EStateType InType)
 	EStateType type = Type;
 	Type = InType;
 
+	SH_CLog::Print("ChangeType");
 	if (OnStateTypeChanged.IsBound())
+	{
 		OnStateTypeChanged.Broadcast(type, InType);
+		SH_CLog::Print("ChangeType Broadcast");
+	}
 }

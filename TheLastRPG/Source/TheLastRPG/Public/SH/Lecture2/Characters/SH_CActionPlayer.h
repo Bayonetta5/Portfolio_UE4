@@ -46,13 +46,14 @@ private:
 	void OnAvoid();
 
 private:
-	UFUNCTION()
+	UFUNCTION() // for Delegate about StateComponent
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
 private:
 	void Begin_Roll();
-	void End_Roll();
-
 	void Begin_Backstep();
+	
+public:
+	void End_Roll();
 	void End_Backstep();
 };

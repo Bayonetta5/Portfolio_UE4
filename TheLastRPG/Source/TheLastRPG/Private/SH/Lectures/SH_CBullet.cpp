@@ -36,5 +36,6 @@ void ASH_CBullet::BeginPlay()
 
 void ASH_CBullet::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
+	SH_CLog::Print("Destroy");
 	Destroy();
 }

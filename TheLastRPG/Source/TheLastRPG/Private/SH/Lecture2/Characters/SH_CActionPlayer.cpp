@@ -31,12 +31,12 @@ ASH_CActionPlayer::ASH_CActionPlayer()
 	GetMesh()->SetSkeletalMesh(mesh);
 
 	TSubclassOf<UAnimInstance> animInstance;
-	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Lectures/ActionRPG/Blueprints/SH_ABP_CPlayer.SH_ABP_CPlayer_C'"); // _C
+	SH_CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/SungHoon/Lectures/ActionRPG/Character/SH_ABP_CPlayer.SH_ABP_CPlayer_C'"); // _C
 	GetMesh()->SetAnimClass(animInstance);
 
-	SpringArm->SetRelativeLocation(FVector(0, 0, 140));
+	SpringArm->SetRelativeLocation(FVector(0, 0, 180));
 	SpringArm->SetRelativeRotation(FRotator(0, 90, 0)); // 좌우 회전으로 90도 = Yaw
-	SpringArm->TargetArmLength = 200.0f;
+	SpringArm->TargetArmLength = 300.0f;
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bUsePawnControlRotation = true; // ?
 	SpringArm->bEnableCameraLag = true; //?
@@ -49,6 +49,7 @@ void ASH_CActionPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	State->OnStateTypeChanged.AddDynamic(this, &ASH_CActionPlayer::OnStateTypeChanged);
 }
 
 void ASH_CActionPlayer::Tick(float DeltaTime)
@@ -110,13 +111,15 @@ void ASH_CActionPlayer::OnAvoid()
 	{
 		State->SetBackstepMode(); // 뒤로가는 버튼을 눌렀다면
 		return;
+		SH_CLog::Print("SetBackstepMode");
 	}
 	State->SetRollMode(); // 뒤로가는거 아니면 Roll
-
+	SH_CLog::Print("SetRollMode");
 }
 
 void ASH_CActionPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
+	SH_CLog::Print("OnStateTypeChanged");
 	switch (InNewType)
 	{
 	case EStateType::Roll:
@@ -130,16 +133,33 @@ void ASH_CActionPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InN
 
 void ASH_CActionPlayer::Begin_Roll()
 {
+	bUseControllerRotationYaw = false; // 구르는 도중에 좌우 회전은 막음
+	GetCharacterMovement()->bOrientRotationToMovement = true; // 회전 방향으로 구름
+
+	FVector start = GetActorLocation();
+	FVector from = start + GetVelocity().GetSafeNormal2D(); // 현재 카메라 바라보는방향 벡터
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, from)); // 현재 위치에서 바라보는 방향으로 회전
+
+	Montages->PlayRoll();
 }
 
 void ASH_CActionPlayer::End_Roll()
 {
+	State->SetIdleMode();
 }
 
 void ASH_CActionPlayer::Begin_Backstep()
 {
+	bUseControllerRotationYaw = true; // 뒤로가면서 좌우 회전가능
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	Montages->PlayBackstep();
 }
 
 void ASH_CActionPlayer::End_Backstep()
 {
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	State->SetIdleMode();
 }
