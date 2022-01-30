@@ -39,6 +39,7 @@ public:
 	// 언리얼은 인라인 함수를 사용할 것을 권장함
 	FORCEINLINE bool GetEquipped() { return bEquipped; }
 	FORCEINLINE bool GetEquipping() { return bEquipping; }
+	FORCEINLINE bool GetAiming() { return bAiming; }
 
 public:	
 	// Sets default values for this actor's properties
@@ -52,6 +53,13 @@ public:
 	void Begin_Unequip();
 	void End_Unequip();
 
+	void Begin_Aiming();
+	void End_Aiming();
+
+	// 연사를 위해서 함수 3개 만듦
+	void Begin_Fire();
+	void Firing();
+	void End_Fire();
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,4 +74,6 @@ private:
 
 	bool bEquipped;
 	bool bEquipping;
+	bool bAiming;
+	bool bFiring;
 };
