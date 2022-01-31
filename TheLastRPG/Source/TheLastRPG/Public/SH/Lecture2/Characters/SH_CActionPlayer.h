@@ -15,8 +15,9 @@ private: // Scene Component
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCameraComponent* Camera;
 
-
 private: // Actor Component
+	UPROPERTY(VisibleDefaultsOnly)
+		class USH_CActionComponent* Action;
 	UPROPERTY(VisibleDefaultsOnly)
 		class USH_CMontagesComponent* Montages;
 	UPROPERTY(VisibleDefaultsOnly)
@@ -56,4 +57,7 @@ private:
 public:
 	void End_Roll();
 	void End_Backstep();
+
+private:
+	void OnOneHand();
 };

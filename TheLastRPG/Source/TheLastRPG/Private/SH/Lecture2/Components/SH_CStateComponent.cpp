@@ -29,6 +29,16 @@ void USH_CStateComponent::SetBackstepMode()
 	ChangeType(EStateType::Backstep);
 }
 
+void USH_CStateComponent::SetEquipMode()
+{
+	ChangeType(EStateType::Equip);
+}
+
+void USH_CStateComponent::SetUnequipMode()
+{
+	ChangeType(EStateType::Unequip);
+}
+
 void USH_CStateComponent::ChangeType(EStateType InType)
 {
 	EStateType type = Type;

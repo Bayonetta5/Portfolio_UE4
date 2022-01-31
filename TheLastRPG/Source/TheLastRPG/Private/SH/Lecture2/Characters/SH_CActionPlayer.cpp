@@ -1,4 +1,5 @@
 #include "SH/Lecture2/Characters/SH_CActionPlayer.h"
+#include "SH/Lecture2/Components/SH_CActionComponent.h"
 #include "SH/Lecture2/Components/SH_COptionActorComponent.h"
 #include "SH/Lecture2/Components/SH_CStatusComponent.h"
 #include "SH/Lecture2/Components/SH_CStateComponent.h"
@@ -17,6 +18,7 @@ ASH_CActionPlayer::ASH_CActionPlayer()
 	SH_CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	SH_CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 
+	SH_CHelpers::CreateActorComponent<USH_CActionComponent>(this, &Action, "Action");
 	SH_CHelpers::CreateActorComponent<USH_CMontagesComponent>(this, &Montages, "Montages");
 	SH_CHelpers::CreateActorComponent<USH_COptionActorComponent>(this, &Option, "Option");
 	SH_CHelpers::CreateActorComponent<USH_CStatusComponent>(this, &Status, "Status");
@@ -68,6 +70,7 @@ void ASH_CActionPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &ASH_CActionPlayer::OnVerticalLook);
 
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ASH_CActionPlayer::OnAvoid);
+	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ASH_CActionPlayer::OnOneHand);
 }
 
 void ASH_CActionPlayer::OnMoveForward(float Axis)
@@ -117,6 +120,13 @@ void ASH_CActionPlayer::OnAvoid()
 	SH_CLog::Print("SetRollMode");
 }
 
+void ASH_CActionPlayer::OnOneHand()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetOneHandMode();
+}
+
 void ASH_CActionPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	SH_CLog::Print("OnStateTypeChanged");
@@ -145,6 +155,12 @@ void ASH_CActionPlayer::Begin_Roll()
 
 void ASH_CActionPlayer::End_Roll()
 {
+	if (Action->IsUnarmedMode() == false)
+	{
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+
 	State->SetIdleMode();
 }
 
@@ -158,8 +174,11 @@ void ASH_CActionPlayer::Begin_Backstep()
 
 void ASH_CActionPlayer::End_Backstep()
 {
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	if (Action->IsUnarmedMode())
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
 
 	State->SetIdleMode();
 }
