@@ -114,22 +114,13 @@ void ASH_CActionPlayer::OnAvoid()
 	{
 		State->SetBackstepMode(); // 뒤로가는 버튼을 눌렀다면
 		return;
-		SH_CLog::Print("SetBackstepMode");
 	}
 	State->SetRollMode(); // 뒤로가는거 아니면 Roll
-	SH_CLog::Print("SetRollMode");
 }
 
-void ASH_CActionPlayer::OnOneHand()
-{
-	CheckFalse(State->IsIdleMode());
-
-	Action->SetOneHandMode();
-}
 
 void ASH_CActionPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
-	SH_CLog::Print("OnStateTypeChanged");
 	switch (InNewType)
 	{
 	case EStateType::Roll:
@@ -155,7 +146,7 @@ void ASH_CActionPlayer::Begin_Roll()
 
 void ASH_CActionPlayer::End_Roll()
 {
-	if (Action->IsUnarmedMode() == false)
+	if (Action->IsUnarmedMode() == false) // 무기를 들고 있다면
 	{
 		bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -174,11 +165,18 @@ void ASH_CActionPlayer::Begin_Backstep()
 
 void ASH_CActionPlayer::End_Backstep()
 {
-	if (Action->IsUnarmedMode())
+	if (Action->IsUnarmedMode()) // 무기일땐 풀어주면 안됨.
 	{
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
 
 	State->SetIdleMode();
+}
+
+void ASH_CActionPlayer::OnOneHand()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetOneHandMode();
 }

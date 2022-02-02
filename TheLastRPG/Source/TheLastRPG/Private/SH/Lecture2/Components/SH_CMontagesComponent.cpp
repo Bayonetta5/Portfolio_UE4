@@ -61,7 +61,6 @@ void USH_CMontagesComponent::PlayAnimMontage(EStateType InState)
 		if (!!data->AnimMontage)
 		{
 			character->PlayAnimMontage(data->AnimMontage, data->PlayRatio, data->StartSection);
-			PrintLine();
 		}
 	}
 }

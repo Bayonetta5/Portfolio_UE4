@@ -8,7 +8,7 @@ UCLASS()
 class THELASTRPG_API USH_CActionAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-		
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float Speed;

@@ -12,7 +12,7 @@ class THELASTRPG_API USH_COptionActorComponent : public UActorComponent
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-		float HorizontalLookRate = 45;
+		float HorizontalLookRate = 60;
 	UPROPERTY(EditDefaultsOnly)
 		float VerticalLookRate = 45;
 

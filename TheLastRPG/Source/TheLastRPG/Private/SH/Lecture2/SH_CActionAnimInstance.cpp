@@ -6,7 +6,6 @@
 void USH_CActionAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-
 }
 
 void USH_CActionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
