@@ -1,7 +1,7 @@
 #include "SH/Lecture2/Actions/SH_CEquipment.h"
-#include "SH/SH_Global.h"
 #include "SH/Lecture2/Components/SH_CStateComponent.h"
 #include "SH/Lecture2/Components/SH_CStatusComponent.h"
+#include "SH/SH_Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -34,13 +34,17 @@ void ASH_CEquipment::Equip_Implementation()
 
 void ASH_CEquipment::Unequip_Implementation()
 {
+	if (OnUnequipmentDelegate.IsBound())
+		OnUnequipmentDelegate.Broadcast();
+
 	OwnerCharacter->bUseControllerRotationYaw = false;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ASH_CEquipment::Begin_Equip_Implementation()
 {
-
+	if (OnEquipmentDelegate.IsBound())
+		OnEquipmentDelegate.Broadcast();
 }
 
 void ASH_CEquipment::End_Equip_Implementation()

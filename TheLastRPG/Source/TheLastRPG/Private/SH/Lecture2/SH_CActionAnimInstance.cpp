@@ -6,6 +6,14 @@
 void USH_CActionAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+
+	ACharacter* character = Cast< ACharacter>(TryGetPawnOwner());
+	CheckNull(character);
+
+	USH_CActionComponent* action = SH_CHelpers::GetComponent< USH_CActionComponent>(character);
+	CheckNull(action);
+
+	action->OnActionTypeChanged.AddDynamic(this, &USH_CActionAnimInstance::OnActionTypeChanged);
 }
 
 void USH_CActionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -17,4 +25,9 @@ void USH_CActionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = character->GetVelocity().Size2D();
 	Direction = CalculateDirection(character->GetVelocity(), character->GetControlRotation());
+}
+
+void USH_CActionAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionType InNewType)
+{
+	ActionType = InNewType;
 }

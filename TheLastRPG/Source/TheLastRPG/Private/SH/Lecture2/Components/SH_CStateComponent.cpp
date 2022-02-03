@@ -34,9 +34,9 @@ void USH_CStateComponent::SetEquipMode()
 	ChangeType(EStateType::Equip);
 }
 
-void USH_CStateComponent::SetUnequipMode()
+void USH_CStateComponent::SetActionMode()
 {
-	ChangeType(EStateType::Unequip);
+	ChangeType(EStateType::Action);
 }
 
 void USH_CStateComponent::ChangeType(EStateType InType)

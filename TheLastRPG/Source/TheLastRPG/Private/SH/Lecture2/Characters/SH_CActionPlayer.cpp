@@ -5,11 +5,12 @@
 #include "SH/Lecture2/Components/SH_CStateComponent.h"
 #include "SH/Lecture2/Components/SH_CMontagesComponent.h"
 #include "SH/SH_Global.h"
+
+#include "Animation/AnimInstance.h"
+#include "Camera/CameraComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Camera/CameraComponent.h"
-#include "Animation/AnimInstance.h"
-#include "Components/SkeletalMeshComponent.h"
 
 ASH_CActionPlayer::ASH_CActionPlayer()
 {
@@ -71,6 +72,7 @@ void ASH_CActionPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ASH_CActionPlayer::OnAvoid);
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ASH_CActionPlayer::OnOneHand);
+	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, this, &ASH_CActionPlayer::OnDoAction);
 }
 
 void ASH_CActionPlayer::OnMoveForward(float Axis)
@@ -135,7 +137,7 @@ void ASH_CActionPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InN
 void ASH_CActionPlayer::Begin_Roll()
 {
 	bUseControllerRotationYaw = false; // 구르는 도중에 좌우 회전은 막음
-	GetCharacterMovement()->bOrientRotationToMovement = true; // 회전 방향으로 구름
+	GetCharacterMovement()->bOrientRotationToMovement = true; // 현재 이동하려고 하는 방향으로 움직이도록함
 
 	FVector start = GetActorLocation();
 	FVector from = start + GetVelocity().GetSafeNormal2D(); // 현재 카메라 바라보는방향 벡터
@@ -179,4 +181,9 @@ void ASH_CActionPlayer::OnOneHand()
 	CheckFalse(State->IsIdleMode());
 
 	Action->SetOneHandMode();
+}
+
+void ASH_CActionPlayer::OnDoAction()
+{
+	Action->DoAction();
 }

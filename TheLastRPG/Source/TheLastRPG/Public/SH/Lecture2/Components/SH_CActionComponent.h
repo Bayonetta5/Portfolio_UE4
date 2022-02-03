@@ -19,7 +19,7 @@ class THELASTRPG_API USH_CActionComponent : public UActorComponent
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapons")
-		class USH_CActionData* Datas[(int32)EActionType::Max];
+		class USH_CActionData* Datas[(int32)EActionType::Max]; // Player BP 에디터에서 넣어줄거임.
 
 public:
 	UFUNCTION(BlueprintPure)
@@ -40,6 +40,9 @@ public:
 	void SetOneHandMode();
 	void SetTwoHandMode();
 
+public:
+	void DoAction();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -47,7 +50,7 @@ private:
 	void SetMode(EActionType InType);
 	void ChangeType(EActionType InNewType);
 
-private:
+public:
 	UPROPERTY(BlueprintAssignable)
 		FActionTypeChanged OnActionTypeChanged;
 

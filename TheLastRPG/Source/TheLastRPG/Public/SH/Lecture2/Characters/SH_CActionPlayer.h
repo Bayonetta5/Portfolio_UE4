@@ -60,4 +60,5 @@ public:
 
 private:
 	void OnOneHand();
+	void OnDoAction();
 };

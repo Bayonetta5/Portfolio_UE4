@@ -5,6 +5,9 @@
 #include "SH/Lecture2/Actions/SH_CActionData.h"
 #include "SH_CEquipment.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnequipmentDelegate);
+
 UCLASS()
 class THELASTRPG_API ASH_CEquipment : public AActor
 {
@@ -41,6 +44,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	UPROPERTY(BlueprintAssignable)
+		FEquipmentDelegate OnEquipmentDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+		FUnequipmentDelegate OnUnequipmentDelegate;
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		class ACharacter* OwnerCharacter;
@@ -52,5 +62,5 @@ protected:
 		class USH_CStatusComponent* Status;
 
 private:
-	FEquipmentData Data; // ActionData
+	FEquipmentData Data; // for ActionData class
 };
