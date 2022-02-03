@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraShakeBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -49,6 +50,7 @@ AJG_Player::AJG_Player()
 	SpringArm->SocketOffset = FVector(0, 60,0);
 
 	JG_Helpers::GetClass<UJG_UserWidget_CrossHair>(&CrossHairClass, "WidgetBlueprint'/Game/JongGyun/Widgets/JG_WB_CrossHair.JG_WB_CrossHair_C'");
+	JG_Helpers::GetClass<UMatineeCameraShake>(&CameraShakeClass, "Blueprint'/Game/JongGyun/Character/BP_JG_MatineeCameraShake.BP_JG_MatineeCameraShake_C'");
 }
 
 void AJG_Player::GetLocationAndDirection(FVector& OutStart, FVector& OutEnd, FVector& OutDirection)
@@ -129,6 +131,12 @@ void AJG_Player::OnFocus()
 void AJG_Player::OffFocus()
 {
 	CrossHair->OffFocus();
+}
+
+void AJG_Player::PlayCameraShake()
+{
+	//카메라 매니저는 플레이어 컨트롤러에 있음
+	GetController<APlayerController>()->PlayerCameraManager->PlayCameraShake(CameraShakeClass);
 }
 
 void AJG_Player::OnMoveForward(float Axis)

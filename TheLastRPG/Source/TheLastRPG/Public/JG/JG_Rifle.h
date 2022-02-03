@@ -27,6 +27,29 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
 	class UAnimMontage* UngrabMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class UAnimMontage* FireMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class UParticleSystem* FlashParticle;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class UParticleSystem* EjectParticle;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class UParticleSystem* ImpactParticle;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class USoundCue* FireSoundCue;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	TSubclassOf<class AJG_Bullet> BulletClass;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Rifle")
+	class UMaterialInstanceConstant* DecalMaterial;
+
+
+
 public:
 	// 팩토리 구조 : 어떤것을 스폰시킬때 내부적으로 처리해서 리턴시켜주는 방식
 	// 공통적인 부분만 관리할 수 있기 때문에 외부에서 처리하는것보다 편함

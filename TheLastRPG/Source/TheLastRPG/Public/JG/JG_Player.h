@@ -16,6 +16,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<class UJG_UserWidget_CrossHair> CrossHairClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		TSubclassOf<class UMatineeCameraShake> CameraShakeClass;
+
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;
@@ -33,6 +36,7 @@ protected:
 		void OnZoomOut();
 public:
 	FORCEINLINE class AJG_Rifle* GetRifle() override { return Rifle; }
+	FORCEINLINE TSubclassOf<class UMatineeCameraShake> GetCameraShakeClass() { return CameraShakeClass; }
 
 public:
 	AJG_Player();
@@ -49,6 +53,8 @@ public:
 
 	void OnFocus() override;
 	void OffFocus() override;
+
+	void PlayCameraShake();
 
 private:
 	void OnMoveForward(float Axis);
